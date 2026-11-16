@@ -1,5 +1,16 @@
 import "dotenv/config";
 
+/**
+ * Validates and centralizes application environment configuration.
+ *
+ * Loads environment variables from the .env file and ensures all
+ * required variables are present before the application starts.
+ *
+ * Exposes typed configuration values with development defaults
+ * for optional settings such as NODE_ENV, PORT, and APP_URL.
+ *
+ * @throws {Error} If a required environment variable is missing.
+ */
 const requiredEnvVariables = ["DATABASE_URL"] as const;
 
 for (const variable of requiredEnvVariables) {

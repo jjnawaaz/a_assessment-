@@ -3,6 +3,21 @@ import type { Request, Response, NextFunction } from "express";
 import { getPaste } from "../services/paste.service.js";
 import { AppError } from "../middlewares/error.middleware.js";
 
+/**
+ * Renders a shared paste as an HTML page.
+ *
+ * Retrieves the paste through the paste service, which also checks
+ * its availability and consumes one view. The paste content is HTML-
+ * escaped before rendering to prevent stored cross-site scripting (XSS).
+ *
+ * @route GET /p/:id
+ * @param req - Express request containing the paste ID as a route parameter.
+ * @param res - Express response used to return the rendered HTML page.
+ * @param next - Express middleware function for forwarding errors.
+ * @returns A 200 OK response containing the HTML representation of the paste.
+ * @throws {AppError} 400 - If the paste ID is invalid.
+ * @throws {AppError} 404 - If the paste does not exist or is unavailable.
+ */
 export const getPastePageController = async (
   req: Request,
   res: Response,

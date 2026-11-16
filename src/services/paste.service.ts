@@ -3,6 +3,20 @@ import { AppError } from "../middlewares/error.middleware.js";
 import { generatePasteId } from "../utils/generate-id.js";
 import type { CreatePasteInput, PasteResponse } from "../types/paste.types.js";
 
+/**
+ * Creates a new paste and persists it to the database.
+ *
+ * Validates the supplied content and optional constraints before
+ * creating the paste. A paste can have an optional expiration date
+ * and a maximum number of permitted views.
+ *
+ * @param input - Paste content and optional expiration/view constraints.
+ * @returns The newly created paste, including its generated ID and metadata.
+ *
+ * @throws {AppError} 400 - If content is missing or invalid.
+ * @throws {AppError} 400 - If the expiration date is invalid or not in the future.
+ * @throws {AppError} 400 - If maxViews is not a positive integer.
+ */
 export const createPaste = async (
   input: CreatePasteInput,
 ): Promise<PasteResponse> => {
@@ -45,6 +59,24 @@ export const createPaste = async (
   return paste;
 };
 
+/**
+ * Retrieves an available paste and atomically consumes one view.
+ *
+ * A paste is considered available when:
+ * - It exists.
+ * - It has not passed its expiration time.
+ * - Its view count has not reached its configured maximum.
+ *
+ * Availability checks and the view-count increment are performed
+ * in a single database operation. This prevents concurrent requests
+ * from exceeding the configured view limit through race conditions.
+ *
+ * @param id - Unique identifier of the paste to retrieve.
+ * @returns The paste with its updated view count.
+ *
+ * @throws {AppError} 404 - If the paste does not exist, has expired,
+ * or has exhausted its view limit.
+ */
 export const getPaste = async (id: string): Promise<PasteResponse> => {
   const now = new Date();
 

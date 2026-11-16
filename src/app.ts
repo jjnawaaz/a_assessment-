@@ -5,6 +5,18 @@ import pasteRouter from "./routes/paste.routes.js";
 import { getPastePageController } from "./controllers/paste-page.controller.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 
+/**
+ * Configures and initializes the Express application.
+ *
+ * Registers application-wide middleware for cross-origin requests
+ * and JSON/form request parsing, exposes the health-check endpoint,
+ * mounts paste-related API routes, and serves browser-based paste pages.
+ *
+ * Registers the centralized error-handling middleware after all routes
+ * to ensure errors from route handlers are handled consistently.
+ *
+ * @returns The configured Express application instance.
+ */
 const app = express();
 
 // Middlewares

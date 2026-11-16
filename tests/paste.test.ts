@@ -5,10 +5,23 @@ import request from "supertest";
 
 import app from "../src/app.js";
 import prisma from "../src/lib/prisma.js";
+import type { CreatePasteInput } from "../src/types/paste.types.js";
 
+/**
+ * Tracks paste IDs created during integration tests.
+ *
+ * These records are removed during test teardown to keep the
+ * test database clean.
+ */
 const createdPasteIds = new Set<string>();
 
-const createTestPaste = async (payload: Record<string, unknown>) => {
+/**
+ * Creates a paste through the API and tracks its ID for test cleanup.
+ *
+ * @param payload - Request body containing paste content and optional constraints.
+ * @returns The HTTP response received from the paste creation endpoint.
+ */
+const createTestPaste = async (payload: CreatePasteInput) => {
   const response = await request(app).post("/api/pastes").send(payload);
 
   if (response.body.id) {
@@ -18,6 +31,12 @@ const createTestPaste = async (payload: Record<string, unknown>) => {
   return response;
 };
 
+/**
+ * Removes all pastes created during the test suite and disconnects Prisma.
+ *
+ * Runs after all tests, ensuring test data does not persist in the database
+ * and database connections are properly released.
+ */
 afterAll(async () => {
   try {
     if (createdPasteIds.size > 0) {
@@ -32,6 +51,15 @@ afterAll(async () => {
   } finally {
     await prisma.$disconnect();
   }
+});
+
+describe("GET /api/health", () => {
+  it("should return the application health status", async () => {
+    const response = await request(app).get("/api/health");
+
+    expect(response.status).toBe(200);
+    expect(response.body.status).toBe("ok");
+  });
 });
 
 describe("Paste API Integration Tests", () => {
