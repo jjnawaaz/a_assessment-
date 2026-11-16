@@ -1,0 +1,29 @@
+
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    "types": ["node"],
+
+    "sourceMap": true,
+    "noEmitOnError": true,
+    "declaration": true,    // generates .d.ts type declaration files
+
+    "noUnusedLocals": true,       // detects unused variables
+    "noUnusedParameters": true,     // detects unused function parameters
+    "noFallthroughCasesInSwitch": true,   // prevents accidental switch fallthrough
+    "noImplicitReturns": true       // ensures functions return consistently
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "tests"] // keeps tests seperate from production build
+}
